@@ -45,7 +45,7 @@ public class Cameras {
                .setLiveViewContainerId(1)
                 .build();
        wholeVisionPortal = VisionPortal.makeMultiPortalView(2, MultiPortalLayout.VERTICAL);
-      
+      //I think this is all I need to do?
        //IM TRYING MY BEST OKAY
     }
 
