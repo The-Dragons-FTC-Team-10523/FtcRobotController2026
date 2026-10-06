@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.TeamCode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionPortal.MultiPortalLayout;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
@@ -13,6 +15,7 @@ public class Cameras {
     public AprilTagProcessor.Builder swyftCameraTwoBuilder;
     public VisionPortal swyftVisionPortalOne;
     public VisionPortal swyftVisionPortalTwo;
+    public int[] wholeVisionPortal;
     public Cameras(HardwareMap hardwareMap) {
        swyftCameraOneBuilder = new AprilTagProcessor.Builder();
        swyftCameraTwoBuilder = new AprilTagProcessor.Builder();
@@ -32,13 +35,18 @@ public class Cameras {
                 .addProcessor(swyftCameraOne)
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setAutoStopLiveView(true)
+               .setLiveViewContainerId(0)
                 .build();
        swyftVisionPortalTwo = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "swyftCameraTwo"))
                 .addProcessor(swyftCameraTwo)
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setAutoStopLiveView(true)
+               .setLiveViewContainerId(1)
                 .build();
+       wholeVisionPortal = VisionPortal.makeMultiPortalView(2, MultiPortalLayout.VERTICAL);
+      
+       //IM TRYING MY BEST OKAY
     }
 
 }

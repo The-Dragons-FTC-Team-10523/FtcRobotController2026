@@ -22,7 +22,9 @@ public class CameraPractice extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         cams = new Cameras(hardwareMap);
+
         waitForStart();
+
         for(AprilTagDetection detection : AprilTagDetections1 ) {
             if (detection instanceof AprilTagClusterDetection){
 
