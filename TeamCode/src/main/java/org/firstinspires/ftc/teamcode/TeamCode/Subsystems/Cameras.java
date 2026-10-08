@@ -9,37 +9,37 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class Cameras {
-    public AprilTagProcessor swyftCameraOne;
-    public AprilTagProcessor swyftCameraTwo;
-    public AprilTagProcessor.Builder swyftCameraOneBuilder;
-    public AprilTagProcessor.Builder swyftCameraTwoBuilder;
-    public VisionPortal swyftVisionPortalOne;
-    public VisionPortal swyftVisionPortalTwo;
+    public AprilTagProcessor pollenCam;
+    public AprilTagProcessor nectarCam;
+    public AprilTagProcessor.Builder pollenCamBuilder;
+    public AprilTagProcessor.Builder nectarCamBuilder;
+    public VisionPortal pollenVisionPortal;
+    public VisionPortal nectarVisionPortal;
     public int[] wholeVisionPortal;
     public Cameras(HardwareMap hardwareMap) {
-       swyftCameraOneBuilder = new AprilTagProcessor.Builder();
-       swyftCameraTwoBuilder = new AprilTagProcessor.Builder();
-       swyftCameraOneBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
-       swyftCameraOneBuilder.setDrawTagID(true);
-       swyftCameraOneBuilder.setDrawAxes(true);
-       swyftCameraOneBuilder.setDrawTagOutline(true);
-       swyftCameraOne = swyftCameraOneBuilder.build();
+       pollenCamBuilder = new AprilTagProcessor.Builder();
+       nectarCamBuilder = new AprilTagProcessor.Builder();
+       pollenCamBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
+       pollenCamBuilder.setDrawTagID(true);
+       pollenCamBuilder.setDrawAxes(true);
+       pollenCamBuilder.setDrawTagOutline(true);
+       pollenCam = pollenCamBuilder.build();
        //two????
-        swyftCameraTwoBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
-        swyftCameraTwoBuilder.setDrawTagID(true);
-        swyftCameraTwoBuilder.setDrawAxes(true);
-        swyftCameraTwoBuilder.setDrawTagOutline(true);
-        swyftCameraTwo = swyftCameraTwoBuilder.build();
-       swyftVisionPortalOne = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "swyftCameraOne"))
-                .addProcessor(swyftCameraOne)
+        nectarCamBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
+        nectarCamBuilder.setDrawTagID(true);
+        nectarCamBuilder.setDrawAxes(true);
+        nectarCamBuilder.setDrawTagOutline(true);
+        nectarCam = nectarCamBuilder.build();
+       pollenVisionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "pollenCam"))
+                .addProcessor(pollenCam)
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setAutoStopLiveView(true)
                .setLiveViewContainerId(0)
                 .build();
-       swyftVisionPortalTwo = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "swyftCameraTwo"))
-                .addProcessor(swyftCameraTwo)
+       nectarVisionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "nectarCam"))
+                .addProcessor(nectarCam)
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setAutoStopLiveView(true)
                .setLiveViewContainerId(1)

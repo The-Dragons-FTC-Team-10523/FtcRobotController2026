@@ -16,8 +16,8 @@ import java.util.List;
 @Autonomous(name = "CameraPractice")
 public class CameraPractice extends LinearOpMode{
     Cameras cams;
-    List<AprilTagDetection> AprilTagDetections1 = cams.swyftCameraOne.getDetections();
-    List<AprilTagDetection> AprilTagDetections2 = cams.swyftCameraTwo.getDetections();
+    List<AprilTagDetection> AprilTagDetectionsPollen = cams.pollenCam.getDetections();
+    List<AprilTagDetection> AprilTagDetectionsNectar = cams.nectarCam.getDetections();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -25,8 +25,8 @@ public class CameraPractice extends LinearOpMode{
 
         waitForStart();
         while (opModeIsActive()) {
-            for (AprilTagDetection detection : AprilTagDetections1) {
-                telemetry.addLine("---Camera One---");
+            for (AprilTagDetection detection : AprilTagDetectionsPollen) {
+                telemetry.addLine("---Pollen Camera---");
                 if (detection instanceof AprilTagClusterDetection) {
                     AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
                     if (clusterDet.metadata != null) {
@@ -37,8 +37,8 @@ public class CameraPractice extends LinearOpMode{
                     }
                 }
             }
-            for (AprilTagDetection detection : AprilTagDetections2) {
-                telemetry.addLine("---Camera Two---");
+            for (AprilTagDetection detection : AprilTagDetectionsNectar) {
+                telemetry.addLine("---Nectar Camera---");
                 if (detection instanceof AprilTagClusterDetection) {
                     AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
                     if (clusterDet.metadata != null) {
@@ -51,7 +51,7 @@ public class CameraPractice extends LinearOpMode{
             }
             telemetry.update();
             // CAMERA 1 THATS CRAZY
-            for (AprilTagDetection detection : AprilTagDetections1){
+            for (AprilTagDetection detection : AprilTagDetectionsPollen){
                 if (detection instanceof AprilTagClusterDetection) {
                     AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
                     if (clusterDet.metadata != null) {
@@ -73,7 +73,7 @@ public class CameraPractice extends LinearOpMode{
                 }
             }
             // CAMERA 2 THATS CRAZY
-            for (AprilTagDetection detection : AprilTagDetections1){
+            for (AprilTagDetection detection : AprilTagDetectionsNectar){
                 if (detection instanceof AprilTagClusterDetection) {
                     AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
                     if (clusterDet.metadata != null) {
