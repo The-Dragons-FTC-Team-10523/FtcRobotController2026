@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeamCode.Auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import                                                                                               com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -16,15 +16,19 @@ import java.util.List;
 @Autonomous(name = "CameraPractice")
 public class CameraPractice extends LinearOpMode{
     Cameras cams;
-    List<AprilTagDetection> AprilTagDetectionsPollen = cams.pollenCam.getDetections();
-    List<AprilTagDetection> AprilTagDetectionsNectar = cams.nectarCam.getDetections();
+    List<AprilTagDetection> AprilTagDetectionsPollen;
+    List<AprilTagDetection> AprilTagDetectionsNectar;
 
     @Override
     public void runOpMode() throws InterruptedException {
         cams = new Cameras(hardwareMap);
 
         waitForStart();
+        cams.nectarVisionPortal.setProcessorEnabled(cams.nectarCam, true);
+        cams.pollenVisionPortal.setProcessorEnabled(cams.pollenCam, true);
         while (opModeIsActive()) {
+            AprilTagDetectionsPollen = cams.pollenCam.getDetections();
+            AprilTagDetectionsNectar = cams.nectarCam.getDetections();
             for (AprilTagDetection detection : AprilTagDetectionsPollen) {
                 telemetry.addLine("---Pollen Camera---");
                 if (detection instanceof AprilTagClusterDetection) {
@@ -58,7 +62,6 @@ public class CameraPractice extends LinearOpMode{
                         if ( clusterDet.metadata.name == "RED AUDIENCE" || clusterDet.metadata.name == "RED SCORING" ){//find actual apriltag names and change per teleop
                             if ( -90 < clusterDet.ftcPose.roll && clusterDet.ftcPose.roll < 90) { //lmao what is this error T^T
                                 telemetry.addLine("Correct Cell Aimed");
-                                telemetry.update();
                                 while (clusterDet.ftcPose.x > -5 && clusterDet.ftcPose.y < 5){
                                     if (clusterDet.ftcPose.x > 0){
                                         // the turret moves right
@@ -80,7 +83,6 @@ public class CameraPractice extends LinearOpMode{
                         if ( clusterDet.metadata.name == "RED AUDIENCE" || clusterDet.metadata.name == "RED SCORING" ){//find actual apriltag names and change per teleop
                             if ( -90 < clusterDet.ftcPose.roll && clusterDet.ftcPose.roll < 90) { //lmao what is this error T^T
                                 telemetry.addLine("Correct Cell Aimed");
-                                telemetry.update();
                                 while (clusterDet.ftcPose.x > -5 && clusterDet.ftcPose.y < 5){
                                     if (clusterDet.ftcPose.x > 0){
                                         // the turret moves right
@@ -94,8 +96,9 @@ public class CameraPractice extends LinearOpMode{
                     }
                 }
             }
+            telemetry.update();
         }
     }
 }
-// to do- figure ou how to use the data to determine if
+// to do-Telemetry all disappears when when corect cell aimed line is added
 //update the sdk !!! --fixed, was a gradle sync issue (its always gradle...)

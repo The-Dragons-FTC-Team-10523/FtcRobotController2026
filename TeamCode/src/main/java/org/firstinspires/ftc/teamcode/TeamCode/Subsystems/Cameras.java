@@ -17,36 +17,39 @@ public class Cameras {
     public VisionPortal nectarVisionPortal;
     public int[] wholeVisionPortal;
     public Cameras(HardwareMap hardwareMap) {
-       pollenCamBuilder = new AprilTagProcessor.Builder();
-       nectarCamBuilder = new AprilTagProcessor.Builder();
-       pollenCamBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
-       pollenCamBuilder.setDrawTagID(true);
-       pollenCamBuilder.setDrawAxes(true);
-       pollenCamBuilder.setDrawTagOutline(true);
-       pollenCam = pollenCamBuilder.build();
-       //two????
+        wholeVisionPortal = VisionPortal.makeMultiPortalView(2, MultiPortalLayout.VERTICAL);
+
+        pollenCamBuilder = new AprilTagProcessor.Builder();
+        nectarCamBuilder = new AprilTagProcessor.Builder();
+        pollenCamBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
+        pollenCamBuilder.setDrawTagID(true);
+        pollenCamBuilder.setDrawAxes(true);
+        pollenCamBuilder.setDrawTagOutline(true);
+        pollenCam = pollenCamBuilder.build();
+
         nectarCamBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
         nectarCamBuilder.setDrawTagID(true);
         nectarCamBuilder.setDrawAxes(true);
         nectarCamBuilder.setDrawTagOutline(true);
         nectarCam = nectarCamBuilder.build();
-       pollenVisionPortal = new VisionPortal.Builder()
+
+        pollenVisionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "pollenCam"))
                 .addProcessor(pollenCam)
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setAutoStopLiveView(true)
-               .setLiveViewContainerId(0)
+                .setLiveViewContainerId(wholeVisionPortal[0])
                 .build();
-       nectarVisionPortal = new VisionPortal.Builder()
+
+        nectarVisionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "nectarCam"))
                 .addProcessor(nectarCam)
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setAutoStopLiveView(true)
-               .setLiveViewContainerId(1)
+                .setLiveViewContainerId(wholeVisionPortal[1])
                 .build();
-       wholeVisionPortal = VisionPortal.makeMultiPortalView(2, MultiPortalLayout.VERTICAL);
-      //I think this is all I need to do?
-       //IM TRYING MY BEST OKAY
+        nectarVisionPortal.setProcessorEnabled(nectarCam, false);
+        pollenVisionPortal.setProcessorEnabled(pollenCam, false);
     }
 
 }
