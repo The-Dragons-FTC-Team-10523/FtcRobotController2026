@@ -11,7 +11,6 @@ import java.util.List;
 
 /**
  * LimelightIntakeHelper
- * 
  * Subsystem helper for retrieving Limelight 3A vision detections (Detector,
  * Classifier, or standard pipeline), calculating target distance, and
  * computing driving commands to approach and intake targets.

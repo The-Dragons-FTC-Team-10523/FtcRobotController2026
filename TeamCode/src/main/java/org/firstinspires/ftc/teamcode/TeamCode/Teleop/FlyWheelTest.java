@@ -5,12 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.Turret;
 
 @TeleOp(name = "FlyWheelTest", group = "TeleOp")
 public class FlyWheelTest extends LinearOpMode {
+    //connected to the subsystem
 
-    private DcMotorEx flywheelMotorA;
-    private DcMotorEx flywheelMotorY;
+    public Turret turret;
 
     // Bare 5000-series motor resolution is exactly 28 ticks per revolution
     static final double TICKS_PER_REV = 28.0;
@@ -21,16 +22,14 @@ public class FlyWheelTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Map two flywheel motors
-        flywheelMotorA = hardwareMap.get(DcMotorEx.class, "FlyWheel0");
-        flywheelMotorY = hardwareMap.get(DcMotorEx.class, "FlyWheel1");
-
+        turret = new Turret(hardwareMap);
         // CRITICAL FLYWHEEL SAFETY: Use FLOAT instead of BRAKE.
-        flywheelMotorA.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        flywheelMotorY.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        turret.flyPollen.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        turret.flyNectar.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         // Set to closed-loop velocity control mode
-        flywheelMotorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        flywheelMotorY.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turret.flyPollen.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turret.flyNectar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         telemetry.addData("Status", "Dual Flywheels Configured. A = FlyWheel1, Y = FlyWheel2.");
         telemetry.update();
@@ -38,18 +37,14 @@ public class FlyWheelTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
-            // Button A controls Motor 1 (FlyWheel1) at 50% speed
             double targetVelA = gamepad1.a ? (MAX_TICKS_PER_SEC) : 0.0;
-            flywheelMotorA.setVelocity(-targetVelA);
-
-            // Button Y controls Motor 2 (FlyWheel2) at 50% speed
+            turret.flyPollen.setVelocity(-targetVelA);
             double targetVelY = gamepad1.y ? (MAX_TICKS_PER_SEC) : 0.0;
-            flywheelMotorY.setVelocity(-targetVelY);
+            turret.flyNectar.setVelocity(-targetVelY);
 
             // Calculate current RPM readings for feedback
-            double currentRpmA = (flywheelMotorA.getVelocity() / TICKS_PER_REV) * 60.0;
-            double currentRpmY = (flywheelMotorY.getVelocity() / TICKS_PER_REV) * 60.0;
+            double currentRpmA = (turret.flyPollen.getVelocity() / TICKS_PER_REV) * 60.0;
+            double currentRpmY = (turret.flyNectar.getVelocity() / TICKS_PER_REV) * 60.0;
 
             telemetry.addData("Motor 1 (A Pressed: " + gamepad1.a + ")", "Target: %.0f RPM | Actual: %.0f RPM", (targetVelA / TICKS_PER_REV) * 60.0, currentRpmA);
             telemetry.addData("Motor 2 (Y Pressed: " + gamepad1.y + ")", "Target: %.0f RPM | Actual: %.0f RPM", (targetVelY / TICKS_PER_REV) * 60.0, currentRpmY);

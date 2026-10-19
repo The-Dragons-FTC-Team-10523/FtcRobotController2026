@@ -17,7 +17,7 @@ public class Cameras {
     public VisionPortal nectarVisionPortal;
     public int[] wholeVisionPortal;
     public Cameras(HardwareMap hardwareMap) {
-        wholeVisionPortal = VisionPortal.makeMultiPortalView(2, MultiPortalLayout.VERTICAL);
+        wholeVisionPortal = VisionPortal.makeMultiPortalView(2, MultiPortalLayout.HORIZONTAL);
 
         pollenCamBuilder = new AprilTagProcessor.Builder();
         nectarCamBuilder = new AprilTagProcessor.Builder();
