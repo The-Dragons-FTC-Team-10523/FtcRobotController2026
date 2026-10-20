@@ -37,6 +37,23 @@ public class CameraPractice extends LinearOpMode{
                         telemetry.addLine("XYZ:" + clusterDet.ftcPose.x + " " + clusterDet.ftcPose.y + " " + clusterDet.ftcPose.z);
                         telemetry.addLine("PRY:" + clusterDet.ftcPose.pitch + " " + clusterDet.ftcPose.roll + " " + clusterDet.ftcPose.yaw);
                         telemetry.addLine("RBE:" + clusterDet.ftcPose.range + " " + clusterDet.ftcPose.bearing + " " + clusterDet.ftcPose.elevation);
+                        if ( clusterDet.metadata.name == "RED AUDIENCE" || clusterDet.metadata.name == "RED SCORING") {//find actual apriltag names and change per teleop
+                            if (-90 < clusterDet.ftcPose.roll && clusterDet.ftcPose.roll < 90) { //lmao what is this error T^T
+                                telemetry.addLine("Correct Cell Aimed");
+                                telemetry.update();
+                                while (clusterDet.ftcPose.x > -5 || clusterDet.ftcPose.x < 5) {
+                                    AprilTagDetectionsPollen = cams.pollenCam.getDetections(); //hopefully rechecking? might have to change a bit
+
+                                    if (clusterDet.ftcPose.x > 0) {
+                                        turret.pollenServos.setPower(.5); // moves right
+                                    } else {
+                                        turret.pollenServos.setPower(-.5); // moves left
+                                    }
+                                }
+                                turret.pollenServos.setPower(0);
+                                //flywheel shenanigans
+                            }
+                        }
                     }
                 }
             }
@@ -49,35 +66,7 @@ public class CameraPractice extends LinearOpMode{
                         telemetry.addLine("XYZ:" + clusterDet.ftcPose.x + " " + clusterDet.ftcPose.y + " " + clusterDet.ftcPose.z);
                         telemetry.addLine("PRY:" + clusterDet.ftcPose.pitch + " " + clusterDet.ftcPose.roll + " " + clusterDet.ftcPose.yaw);
                         telemetry.addLine("RBE:" + clusterDet.ftcPose.range + " " + clusterDet.ftcPose.bearing + " " + clusterDet.ftcPose.elevation);
-                    }
-                }
-            }
-            telemetry.update();
-            // CAMERA 1 THAT'S CRAZY
-            for (AprilTagDetection detection : AprilTagDetectionsPollen){
-                    AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
-                    if ( clusterDet.metadata.name == "RED AUDIENCE" || clusterDet.metadata.name == "RED SCORING") {//find actual apriltag names and change per teleop
-                            if ( -90 < clusterDet.ftcPose.roll && clusterDet.ftcPose.roll < 90) { //lmao what is this error T^T
-                                telemetry.addLine("Correct Cell Aimed");
-                                telemetry.update();
-                                while (clusterDet.ftcPose.x > -5 || clusterDet.ftcPose.x < 5){
-                                    AprilTagDetectionsPollen = cams.pollenCam.getDetections(); //hopefully rechecking? might have to change a bit
-                                    clusterDet = (AprilTagClusterDetection) detection;
-                                    if (clusterDet.ftcPose.x > 0){
-                                        turret.pollenServos.setPower(.5); // moves right
-                                    } else{
-                                        turret.pollenServos.setPower(-.5); // moves left
-                                    }
-                                }
-                                turret.pollenServos.setPower(0);
-                                //flywheel shenanigans
-                            }
-                }
-            }
-            // CAMERA 2 THAT'S CRAZY
-            for (AprilTagDetection detection : AprilTagDetectionsNectar){
-                    AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
-                    if (clusterDet.metadata.name == "RED AUDIENCE" || clusterDet.metadata.name == "RED SCORING") {
+                        if (clusterDet.metadata.name == "RED AUDIENCE" || clusterDet.metadata.name == "RED SCORING") {
                             if ( -90 < clusterDet.ftcPose.roll && clusterDet.ftcPose.roll < 90) { //lmao what is this error T^T
                                 telemetry.addLine("Correct Cell Aimed");
                                 telemetry.update();
@@ -91,8 +80,14 @@ public class CameraPractice extends LinearOpMode{
                                 turret.nectarServos.setPower(0);
                                 //flywheel shenanigans
                             }
+                        }
                     }
+                }
             }
+            telemetry.update();
+            // CAMERA 1 THAT'S CRAZY
+            // CAMERA 2 THAT'S CRAZY
+
         }
     }
 }

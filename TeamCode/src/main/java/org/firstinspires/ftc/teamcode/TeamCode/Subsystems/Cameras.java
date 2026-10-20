@@ -48,8 +48,8 @@ public class Cameras {
                 .setAutoStopLiveView(true)
                 .setLiveViewContainerId(wholeVisionPortal[1])
                 .build();
-        nectarVisionPortal.setProcessorEnabled(nectarCam, false);
-        pollenVisionPortal.setProcessorEnabled(pollenCam, false);
+        nectarVisionPortal.setProcessorEnabled(nectarCam, true);
+        pollenVisionPortal.setProcessorEnabled(pollenCam, true);
     }
 
 }

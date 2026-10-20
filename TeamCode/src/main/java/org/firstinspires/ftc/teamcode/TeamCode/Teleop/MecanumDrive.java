@@ -61,4 +61,4 @@ public class MecanumDrive extends LinearOpMode {
             robotClass.backRight.setPower(wheelSpeeds[3] / largest);
         }
     }
-}
+}// disable camera button
