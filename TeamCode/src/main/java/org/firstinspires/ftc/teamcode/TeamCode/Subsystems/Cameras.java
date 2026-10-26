@@ -8,6 +8,8 @@ import org.firstinspires.ftc.vision.VisionPortal.MultiPortalLayout;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.Arrays;
+
 public class Cameras {
     public AprilTagProcessor pollenCam;
     public AprilTagProcessor nectarCam;
@@ -18,7 +20,6 @@ public class Cameras {
     public int[] wholeVisionPortal;
     public Cameras(HardwareMap hardwareMap) {
         wholeVisionPortal = VisionPortal.makeMultiPortalView(2, MultiPortalLayout.HORIZONTAL);
-
         pollenCamBuilder = new AprilTagProcessor.Builder();
         nectarCamBuilder = new AprilTagProcessor.Builder();
         pollenCamBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
@@ -37,7 +38,6 @@ public class Cameras {
                 .setCamera(hardwareMap.get(WebcamName.class, "pollenCam"))
                 .addProcessor(pollenCam)
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .setAutoStopLiveView(true)
                 .setLiveViewContainerId(wholeVisionPortal[0])
                 .build();
 
@@ -45,9 +45,9 @@ public class Cameras {
                 .setCamera(hardwareMap.get(WebcamName.class, "nectarCam"))
                 .addProcessor(nectarCam)
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .setAutoStopLiveView(true)
                 .setLiveViewContainerId(wholeVisionPortal[1])
                 .build();
+        //hopefully this works(i will play russian roulette if it doesn't)
         nectarVisionPortal.setProcessorEnabled(nectarCam, true);
         pollenVisionPortal.setProcessorEnabled(pollenCam, true);
     }
