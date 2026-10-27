@@ -19,7 +19,6 @@ public class CameraPractice extends LinearOpMode{
     Cameras cams;
     Turret turret;
     List<AprilTagDetection> AprilTagDetectionsPollen = cams.pollenCam.getDetections();
-    List<AprilTagDetection> AprilTagDetectionsNectar = cams.nectarCam.getDetections();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -51,33 +50,6 @@ public class CameraPractice extends LinearOpMode{
                                     }
                                 }
                                 turret.pollenServos.setPower(0);
-                                //flywheel shenanigans
-                            }
-                        }
-                    }
-                }
-            }
-            for (AprilTagDetection detection : AprilTagDetectionsNectar) {
-                telemetry.addLine("---Nectar Camera---");
-                if (detection instanceof AprilTagClusterDetection) {
-                    AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
-                    if (clusterDet.metadata != null) {
-                        telemetry.addLine("Cluster Detected:" + clusterDet.metadata.name + " " + clusterDet.percentClusterFound + "%");
-                        telemetry.addLine("XYZ:" + clusterDet.ftcPose.x + " " + clusterDet.ftcPose.y + " " + clusterDet.ftcPose.z);
-                        telemetry.addLine("PRY:" + clusterDet.ftcPose.pitch + " " + clusterDet.ftcPose.roll + " " + clusterDet.ftcPose.yaw);
-                        telemetry.addLine("RBE:" + clusterDet.ftcPose.range + " " + clusterDet.ftcPose.bearing + " " + clusterDet.ftcPose.elevation);
-                        if (clusterDet.metadata.name == "RED AUDIENCE" || clusterDet.metadata.name == "RED SCORING") {
-                            if ( -90 < clusterDet.ftcPose.roll && clusterDet.ftcPose.roll < 90) { //lmao what is this error T^T
-                                telemetry.addLine("Correct Cell Aimed");
-                                telemetry.update();
-                                while (clusterDet.ftcPose.x > -5 || clusterDet.ftcPose.x < 5){
-                                    if (clusterDet.ftcPose.x > 0){
-                                        turret.nectarServos.setPower(.5);//moves right
-                                    } else{
-                                        turret.nectarServos.setPower(-.5);//moves left
-                                    }
-                                }
-                                turret.nectarServos.setPower(0);
                                 //flywheel shenanigans
                             }
                         }
