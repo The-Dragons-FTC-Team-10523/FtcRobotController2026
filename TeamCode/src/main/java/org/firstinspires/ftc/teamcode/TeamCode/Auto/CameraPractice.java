@@ -50,7 +50,7 @@ public class CameraPractice extends LinearOpMode{
                                     }
                                 }
                                 turret.pollenServos.setPower(0);
-                                //flywheel shenanigans
+                                //flywheel shenanigans, we could use the camera to always point both turrets at the apriltag group?? could use the angle of the turret with a camera to figure out where the other camera needs to point, and both should have the same distance anyway????
                             }
                         }
                     }
@@ -63,4 +63,4 @@ public class CameraPractice extends LinearOpMode{
         }
     }
 }
-// to do- figure ou how to use the data to determine if
+// to do- figure ou how to use the data to determine what angle they both need to be at also rechecking!

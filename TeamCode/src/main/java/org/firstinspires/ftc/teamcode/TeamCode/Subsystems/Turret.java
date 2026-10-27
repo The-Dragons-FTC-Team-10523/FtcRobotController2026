@@ -22,6 +22,6 @@ public class Turret {
         nectarServo1 = hardwareMap.get(CRServo.class, "nectarServo1");
         nectarServo2 = hardwareMap.get(CRServo.class, "nectarServo2");
         pollenServos = new servoGroup(pollenServo1, pollenServo2);
-        nectarServos = new servoGroup(nectarServo1, nectarServo2);
+        nectarServos = new servoGroup(nectarServo1, nectarServo2); //WE'RE GONNA HAVE EXTERNAL ENCODERS ON THESE
     }
 }
