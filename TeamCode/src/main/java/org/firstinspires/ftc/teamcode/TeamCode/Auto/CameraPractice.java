@@ -49,6 +49,7 @@ public class CameraPractice extends LinearOpMode {
                                     }
                                 }
                                 turret.pollenServos.setPower(0);
+                                //flywheel shenanigans T^T
                             }
                         }
                     }

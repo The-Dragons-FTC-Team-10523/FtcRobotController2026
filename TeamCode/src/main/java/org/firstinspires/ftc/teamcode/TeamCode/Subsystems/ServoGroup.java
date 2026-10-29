@@ -1,10 +1,9 @@
 package org.firstinspires.ftc.teamcode.TeamCode.Subsystems;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.Servo;
 
-public class servoGroup {
+public class ServoGroup {
     private CRServo leader, follower;
-    public servoGroup(CRServo leader, CRServo follower) {
+    public ServoGroup(CRServo leader, CRServo follower) {
         this.leader = leader;
         this.follower = follower;
     }
@@ -16,5 +15,5 @@ public class servoGroup {
         leader.setDirection(leaderDirection);
         follower.setDirection(followerDirection);
     }
-
+// encoder external? Might change to internal
 }
