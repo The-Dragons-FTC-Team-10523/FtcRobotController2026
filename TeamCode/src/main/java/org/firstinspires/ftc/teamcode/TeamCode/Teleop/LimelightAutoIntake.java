@@ -3,13 +3,21 @@ package org.firstinspires.ftc.teamcode.TeamCode.Teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.Cameras;
 import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.LimelightIntakeHelper;
 import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.RobotClass;
+import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagSingleDetection;
+
+import java.util.List;
+import java.util.Locale;
 
 /**
  * LimelightAutoIntake
  *
- * TeleOp OpMode demonstrating Limelight 3A detection and automatic intake drive.
+ * TeleOp OpMode demonstrating Limelight 3A detection and automatic intake drive,
+ * working concurrently in parallel with Pollen and Nectar AprilTag Cameras.
  *
  * Controls:
  * - Driver Manual Control: Gamepad1 Left Stick (x, y) & Triggers (turn)
@@ -23,6 +31,7 @@ public class LimelightAutoIntake extends LinearOpMode {
 
     private RobotClass robotClass;
     private LimelightIntakeHelper limelightHelper;
+    private Cameras cams;
     private final double[] wheelSpeeds = {0, 0, 0, 0};
 
     // Stopping distance in inches from ball center
@@ -33,6 +42,7 @@ public class LimelightAutoIntake extends LinearOpMode {
 
         robotClass = new RobotClass(hardwareMap);
         limelightHelper = new LimelightIntakeHelper(hardwareMap, "limelight");
+        cams = new Cameras(hardwareMap);
 
         telemetry.setMsTransmissionInterval(11);
 
@@ -40,6 +50,8 @@ public class LimelightAutoIntake extends LinearOpMode {
         limelightHelper.setCameraMounting(8.0, 15.0, 1.5);
 
         telemetry.addData("Limelight Status", limelightHelper.isInitialized() ? "Initialized OK" : "FAILED to find 'limelight'");
+        telemetry.addData("Pollen Cam Status", cams.pollenCamInitialized ? "Initialized OK" : "FAILED");
+        telemetry.addData("Nectar Cam Status", cams.nectarCamInitialized ? "Initialized OK" : "FAILED");
         telemetry.addData("Instructions", "Press A for Nectar, B for Pollen, X for Any Target.");
         telemetry.update();
 
@@ -51,6 +63,60 @@ public class LimelightAutoIntake extends LinearOpMode {
                 robotClass.resetIMU();
             }
 
+            // --- DUAL CAMERA (POLLEN & NECTAR) PARALLEL DETECTION & CLUSTER PROCESSING ---
+            List<AprilTagDetection> pollenDetections = cams.getPollenDetections();
+            List<AprilTagDetection> nectarDetections = cams.getNectarDetections();
+
+            telemetry.addData("--- DUAL CAMERA TELEMETRY ---", "");
+            telemetry.addData("Pollen Cam Detections", pollenDetections.size());
+            for (AprilTagDetection detection : pollenDetections) {
+                if (detection instanceof AprilTagClusterDetection) {
+                    AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
+                    if (clusterDet.metadata != null) {
+                        telemetry.addLine(String.format(Locale.US, "Pollen Cluster: %s (%d%% found)", clusterDet.metadata.name, clusterDet.percentClusterFound));
+                    } else {
+                        telemetry.addLine(String.format(Locale.US, "Pollen Cluster (%d%% found)", clusterDet.percentClusterFound));
+                    }
+                    if (clusterDet.ftcPose != null) {
+                        telemetry.addLine(String.format(Locale.US, "  XYZ: %.1f, %.1f, %.1f in | RBE: %.1f in, %.1f deg",
+                                clusterDet.ftcPose.x, clusterDet.ftcPose.y, clusterDet.ftcPose.z,
+                                clusterDet.ftcPose.range, clusterDet.ftcPose.bearing));
+                    }
+                } else if (detection instanceof AprilTagSingleDetection) {
+                    AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
+                    if (singleDet.metadata != null) {
+                        telemetry.addLine(String.format(Locale.US, "Pollen Tag ID %d: %s", singleDet.id, singleDet.metadata.name));
+                    } else {
+                        telemetry.addLine(String.format(Locale.US, "Pollen Tag ID %d", singleDet.id));
+                    }
+                }
+            }
+
+            telemetry.addData("Nectar Cam Detections", nectarDetections.size());
+            for (AprilTagDetection detection : nectarDetections) {
+                if (detection instanceof AprilTagClusterDetection) {
+                    AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
+                    if (clusterDet.metadata != null) {
+                        telemetry.addLine(String.format(Locale.US, "Nectar Cluster: %s (%d%% found)", clusterDet.metadata.name, clusterDet.percentClusterFound));
+                    } else {
+                        telemetry.addLine(String.format(Locale.US, "Nectar Cluster (%d%% found)", clusterDet.percentClusterFound));
+                    }
+                    if (clusterDet.ftcPose != null) {
+                        telemetry.addLine(String.format(Locale.US, "  XYZ: %.1f, %.1f, %.1f in | RBE: %.1f in, %.1f deg",
+                                clusterDet.ftcPose.x, clusterDet.ftcPose.y, clusterDet.ftcPose.z,
+                                clusterDet.ftcPose.range, clusterDet.ftcPose.bearing));
+                    }
+                } else if (detection instanceof AprilTagSingleDetection) {
+                    AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
+                    if (singleDet.metadata != null) {
+                        telemetry.addLine(String.format(Locale.US, "Nectar Tag ID %d: %s", singleDet.id, singleDet.metadata.name));
+                    } else {
+                        telemetry.addLine(String.format(Locale.US, "Nectar Tag ID %d", singleDet.id));
+                    }
+                }
+            }
+
+            // --- LIMELIGHT AUTO-TRACKING & MANUAL MECANUM DRIVE ---
             String activeTargetLabel = "";
             boolean isAutoTracking = false;
 
@@ -73,7 +139,7 @@ public class LimelightAutoIntake extends LinearOpMode {
                 LimelightIntakeHelper.TargetData targetData = limelightHelper.getTargetData(activeTargetLabel, INTAKE_STOP_DISTANCE_INCHES);
 
                 // Diagnostic Telemetry
-                telemetry.addData("--- VISION DIAGNOSTICS ---", "");
+                telemetry.addData("--- LIMELIGHT DIAGNOSTICS ---", "");
                 telemetry.addData("LL Result Valid", targetData.resultValid);
                 telemetry.addData("Pipeline Index", targetData.pipelineIndex);
                 telemetry.addData("Detectors Found", targetData.detectorCount);
@@ -133,5 +199,8 @@ public class LimelightAutoIntake extends LinearOpMode {
         }
 
         limelightHelper.stop();
+        if (cams != null) {
+            cams.stop();
+        }
     }
 }

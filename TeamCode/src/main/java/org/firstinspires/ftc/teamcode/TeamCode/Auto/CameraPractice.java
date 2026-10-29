@@ -2,23 +2,19 @@ package org.firstinspires.ftc.teamcode.TeamCode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.Cameras;
+import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.Turret;
 import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagMetadata;
-import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import java.util.List;
-import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.Turret;
 
+import java.util.ArrayList;
+import java.util.List;
 
 @Autonomous(name = "CameraPractice")
-public class CameraPractice extends LinearOpMode{
+public class CameraPractice extends LinearOpMode {
     Cameras cams;
     Turret turret;
-    List<AprilTagDetection> AprilTagDetectionsPollen = cams.pollenCam.getDetections();
+    List<AprilTagDetection> AprilTagDetectionsPollen = new ArrayList<>();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -27,21 +23,24 @@ public class CameraPractice extends LinearOpMode{
 
         waitForStart();
         while (opModeIsActive()) {
+            AprilTagDetectionsPollen = cams.getPollenDetections();
             for (AprilTagDetection detection : AprilTagDetectionsPollen) {
                 telemetry.addLine("---Pollen Camera---");
                 if (detection instanceof AprilTagClusterDetection) {
                     AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
                     if (clusterDet.metadata != null) {
                         telemetry.addLine("Cluster Detected:" + clusterDet.metadata.name + " " + clusterDet.percentClusterFound + "%");
-                        telemetry.addLine("XYZ:" + clusterDet.ftcPose.x + " " + clusterDet.ftcPose.y + " " + clusterDet.ftcPose.z);
-                        telemetry.addLine("PRY:" + clusterDet.ftcPose.pitch + " " + clusterDet.ftcPose.roll + " " + clusterDet.ftcPose.yaw);
-                        telemetry.addLine("RBE:" + clusterDet.ftcPose.range + " " + clusterDet.ftcPose.bearing + " " + clusterDet.ftcPose.elevation);
-                        if ( clusterDet.metadata.name == "RED AUDIENCE" || clusterDet.metadata.name == "RED SCORING") {//find actual apriltag names and change per teleop
-                            if (-90 < clusterDet.ftcPose.roll && clusterDet.ftcPose.roll < 90) { //lmao what is this error T^T
+                        if (clusterDet.ftcPose != null) {
+                            telemetry.addLine("XYZ:" + clusterDet.ftcPose.x + " " + clusterDet.ftcPose.y + " " + clusterDet.ftcPose.z);
+                            telemetry.addLine("PRY:" + clusterDet.ftcPose.pitch + " " + clusterDet.ftcPose.roll + " " + clusterDet.ftcPose.yaw);
+                            telemetry.addLine("RBE:" + clusterDet.ftcPose.range + " " + clusterDet.ftcPose.bearing + " " + clusterDet.ftcPose.elevation);
+                        }
+                        if ("RED AUDIENCE".equals(clusterDet.metadata.name) || "RED SCORING".equals(clusterDet.metadata.name)) {
+                            if (clusterDet.ftcPose != null && -90 < clusterDet.ftcPose.roll && clusterDet.ftcPose.roll < 90) {
                                 telemetry.addLine("Correct Cell Aimed");
                                 telemetry.update();
-                                while (clusterDet.ftcPose.x > -5 || clusterDet.ftcPose.x < 5) {
-                                    AprilTagDetectionsPollen = cams.pollenCam.getDetections(); //hopefully rechecking? might have to change a bit
+                                while (opModeIsActive() && clusterDet.ftcPose != null && (clusterDet.ftcPose.x > -5 || clusterDet.ftcPose.x < 5)) {
+                                    AprilTagDetectionsPollen = cams.getPollenDetections();
 
                                     if (clusterDet.ftcPose.x > 0) {
                                         turret.pollenServos.setPower(.5); // moves right
@@ -50,17 +49,16 @@ public class CameraPractice extends LinearOpMode{
                                     }
                                 }
                                 turret.pollenServos.setPower(0);
-                                //flywheel shenanigans, we could use the camera to always point both turrets at the apriltag group?? could use the angle of the turret with a camera to figure out where the other camera needs to point, and both should have the same distance anyway????
                             }
                         }
                     }
                 }
             }
             telemetry.update();
-            // CAMERA 1 THAT'S CRAZY
-            // CAMERA 2 THAT'S CRAZY
+        }
 
+        if (cams != null) {
+            cams.stop();
         }
     }
 }
-// to do- figure ou how to use the data to determine what angle they both need to be at also rechecking!
