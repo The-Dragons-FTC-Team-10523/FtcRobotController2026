@@ -19,13 +19,14 @@ public class CameraPractice extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         cams = new Cameras(hardwareMap);
-        turret = new Turret(hardwareMap);
+        //turret = new Turret(hardwareMap);
 
         waitForStart();
+        cams.visionPortal.setProcessorEnabled(cams.cam, true);
         while (opModeIsActive()) {
             AprilTagDetections = cams.getDetections();
             for (AprilTagDetection detection : AprilTagDetections) {
-                telemetry.addLine("---Pollen Camera---");
+                telemetry.addLine("---Camera---");
                 if (detection instanceof AprilTagClusterDetection) {
                     AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
                     if (clusterDet.metadata != null) {
@@ -39,21 +40,14 @@ public class CameraPractice extends LinearOpMode {
                             if (clusterDet.ftcPose != null && -90 < clusterDet.ftcPose.roll && clusterDet.ftcPose.roll < 90) {
                                 telemetry.addLine("Correct Cell Aimed");
                                 telemetry.update();
-                                while (opModeIsActive() && clusterDet.ftcPose != null && (clusterDet.ftcPose.x > -5 || clusterDet.ftcPose.x < 5)) {
-                                    AprilTagDetections = cams.getDetections();
-
-                                    if (clusterDet.ftcPose.x > 0) {
-                                        turret.pollenServos.setPower(.5); // moves right
-                                    } else {
-                                        turret.pollenServos.setPower(-.5); // moves left
-                                    }
-                                }
-                                turret.pollenServos.setPower(0);
-                                //flywheel shenanigans T^T
+                                cams.aimTurret(clusterDet.metadata.name);
                             }
                         }
                     }
                 }
+            }
+            if (AprilTagDetections.isEmpty()) {
+                telemetry.addLine("No detections");
             }
             telemetry.update();
         }
