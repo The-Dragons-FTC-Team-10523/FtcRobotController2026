@@ -14,7 +14,7 @@ import java.util.List;
 public class CameraPractice extends LinearOpMode {
     Cameras cams;
     Turret turret;
-    List<AprilTagDetection> AprilTagDetectionsPollen = new ArrayList<>();
+    List<AprilTagDetection> AprilTagDetections = new ArrayList<>();
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -23,8 +23,8 @@ public class CameraPractice extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            AprilTagDetectionsPollen = cams.getPollenDetections();
-            for (AprilTagDetection detection : AprilTagDetectionsPollen) {
+            AprilTagDetections = cams.getDetections();
+            for (AprilTagDetection detection : AprilTagDetections) {
                 telemetry.addLine("---Pollen Camera---");
                 if (detection instanceof AprilTagClusterDetection) {
                     AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
@@ -40,7 +40,7 @@ public class CameraPractice extends LinearOpMode {
                                 telemetry.addLine("Correct Cell Aimed");
                                 telemetry.update();
                                 while (opModeIsActive() && clusterDet.ftcPose != null && (clusterDet.ftcPose.x > -5 || clusterDet.ftcPose.x < 5)) {
-                                    AprilTagDetectionsPollen = cams.getPollenDetections();
+                                    AprilTagDetections = cams.getDetections();
 
                                     if (clusterDet.ftcPose.x > 0) {
                                         turret.pollenServos.setPower(.5); // moves right

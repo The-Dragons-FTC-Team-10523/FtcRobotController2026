@@ -12,90 +12,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cameras {
-    public AprilTagProcessor pollenCam;
-    public AprilTagProcessor.Builder pollenCamBuilder;
-    public VisionPortal pollenVisionPortal;
 
-    public AprilTagProcessor nectarCam;
-    public AprilTagProcessor.Builder nectarCamBuilder;
-    public VisionPortal nectarVisionPortal;
+    public AprilTagProcessor cam;
+    public AprilTagProcessor.Builder camBuilder;
+    public VisionPortal visionPortal;
 
-    public boolean pollenCamInitialized;
-    public boolean nectarCamInitialized;
+
+    public boolean camInitialized;
 
     public Cameras(HardwareMap hardwareMap) {
-        int[] viewIds = VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.VERTICAL);
 
         // Initialize Pollen Camera
         try {
-            pollenCamBuilder = new AprilTagProcessor.Builder();
-            pollenCamBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
-            pollenCamBuilder.setDrawTagID(true);
-            pollenCamBuilder.setDrawAxes(true);
-            pollenCamBuilder.setDrawTagOutline(true);
-            pollenCam = pollenCamBuilder.build();
+            camBuilder = new AprilTagProcessor.Builder();
+            camBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
+            camBuilder.setDrawTagID(true);
+            camBuilder.setDrawAxes(true);
+            camBuilder.setDrawTagOutline(true);
+            cam = camBuilder.build();
 
-            pollenVisionPortal = new VisionPortal.Builder()
+            visionPortal = new VisionPortal.Builder()
                     .setCamera(hardwareMap.get(WebcamName.class, "pollenCam"))
-                    .setLiveViewContainerId(viewIds[0])
-                    .addProcessor(pollenCam)
+                    .addProcessor(cam)
                     .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                     .setAutoStopLiveView(true)
                     .build();
 
-            pollenVisionPortal.setProcessorEnabled(pollenCam, true);
-            pollenCamInitialized = true;
+            visionPortal.setProcessorEnabled(cam, true);
+            camInitialized = true;
         } catch (Exception e) {
-            pollenCamInitialized = false;
+            camInitialized = false;
         }
 
         // Initialize Nectar Camera
-        try {
-            nectarCamBuilder = new AprilTagProcessor.Builder();
-            nectarCamBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
-            nectarCamBuilder.setDrawTagID(true);
-            nectarCamBuilder.setDrawAxes(true);
-            nectarCamBuilder.setDrawTagOutline(true);
-            nectarCam = nectarCamBuilder.build();
 
-            nectarVisionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "nectarCam"))
-                    .setLiveViewContainerId(viewIds[1])
-                    .addProcessor(nectarCam)
-                    .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                    .setAutoStopLiveView(true)
-                    .build();
-
-            nectarVisionPortal.setProcessorEnabled(nectarCam, true);
-            nectarCamInitialized = true;
-        } catch (Exception e) {
-            nectarCamInitialized = false;
-        }
     }
 
-    public List<AprilTagDetection> getPollenDetections() {
-        if (pollenCamInitialized && pollenCam != null) {
-            return pollenCam.getDetections();
+    public List<AprilTagDetection> getDetections() {
+        if (camInitialized && cam != null) {
+            return cam.getDetections();
         }
         return new ArrayList<>();
     }
 
-    public List<AprilTagDetection> getNectarDetections() {
-        if (nectarCamInitialized && nectarCam != null) {
-            return nectarCam.getDetections();
-        }
-        return new ArrayList<>();
-    }
 
     public void stop() {
-        if (pollenVisionPortal != null) {
+        if (visionPortal != null) {
             try {
-                pollenVisionPortal.close();
-            } catch (Exception ignored) {}
-        }
-        if (nectarVisionPortal != null) {
-            try {
-                nectarVisionPortal.close();
+                visionPortal.close();
             } catch (Exception ignored) {}
         }
     }
