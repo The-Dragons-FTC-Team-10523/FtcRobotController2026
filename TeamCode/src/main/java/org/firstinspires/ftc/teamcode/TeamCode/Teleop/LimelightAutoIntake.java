@@ -50,8 +50,7 @@ public class LimelightAutoIntake extends LinearOpMode {
         limelightHelper.setCameraMounting(8.0, 15.0, 1.5);
 
         telemetry.addData("Limelight Status", limelightHelper.isInitialized() ? "Initialized OK" : "FAILED to find 'limelight'");
-        telemetry.addData("Pollen Cam Status", cams.pollenCamInitialized ? "Initialized OK" : "FAILED");
-        telemetry.addData("Nectar Cam Status", cams.nectarCamInitialized ? "Initialized OK" : "FAILED");
+        telemetry.addData("Cam Status", cams.camInitialized ? "Initialized OK" : "FAILED");
         telemetry.addData("Instructions", "Press A for Nectar, B for Pollen, X for Any Target.");
         telemetry.update();
 
@@ -63,13 +62,11 @@ public class LimelightAutoIntake extends LinearOpMode {
                 robotClass.resetIMU();
             }
 
-            // --- DUAL CAMERA (POLLEN & NECTAR) PARALLEL DETECTION & CLUSTER PROCESSING ---
-            List<AprilTagDetection> pollenDetections = cams.getPollenDetections();
-            List<AprilTagDetection> nectarDetections = cams.getNectarDetections();
+            List<AprilTagDetection> detections = cams.getDetections();
 
-            telemetry.addData("--- DUAL CAMERA TELEMETRY ---", "");
-            telemetry.addData("Pollen Cam Detections", pollenDetections.size());
-            for (AprilTagDetection detection : pollenDetections) {
+            telemetry.addData("--- CAMERA TELEMETRY ---", "");
+            telemetry.addData("Cam Detections", detections.size());
+            for (AprilTagDetection detection : detections) {
                 if (detection instanceof AprilTagClusterDetection) {
                     AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
                     if (clusterDet.metadata != null) {
@@ -81,37 +78,6 @@ public class LimelightAutoIntake extends LinearOpMode {
                         telemetry.addLine(String.format(Locale.US, "  XYZ: %.1f, %.1f, %.1f in | RBE: %.1f in, %.1f deg",
                                 clusterDet.ftcPose.x, clusterDet.ftcPose.y, clusterDet.ftcPose.z,
                                 clusterDet.ftcPose.range, clusterDet.ftcPose.bearing));
-                    }
-                } else if (detection instanceof AprilTagSingleDetection) {
-                    AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
-                    if (singleDet.metadata != null) {
-                        telemetry.addLine(String.format(Locale.US, "Pollen Tag ID %d: %s", singleDet.id, singleDet.metadata.name));
-                    } else {
-                        telemetry.addLine(String.format(Locale.US, "Pollen Tag ID %d", singleDet.id));
-                    }
-                }
-            }
-
-            telemetry.addData("Nectar Cam Detections", nectarDetections.size());
-            for (AprilTagDetection detection : nectarDetections) {
-                if (detection instanceof AprilTagClusterDetection) {
-                    AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
-                    if (clusterDet.metadata != null) {
-                        telemetry.addLine(String.format(Locale.US, "Nectar Cluster: %s (%d%% found)", clusterDet.metadata.name, clusterDet.percentClusterFound));
-                    } else {
-                        telemetry.addLine(String.format(Locale.US, "Nectar Cluster (%d%% found)", clusterDet.percentClusterFound));
-                    }
-                    if (clusterDet.ftcPose != null) {
-                        telemetry.addLine(String.format(Locale.US, "  XYZ: %.1f, %.1f, %.1f in | RBE: %.1f in, %.1f deg",
-                                clusterDet.ftcPose.x, clusterDet.ftcPose.y, clusterDet.ftcPose.z,
-                                clusterDet.ftcPose.range, clusterDet.ftcPose.bearing));
-                    }
-                } else if (detection instanceof AprilTagSingleDetection) {
-                    AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detection;
-                    if (singleDet.metadata != null) {
-                        telemetry.addLine(String.format(Locale.US, "Nectar Tag ID %d: %s", singleDet.id, singleDet.metadata.name));
-                    } else {
-                        telemetry.addLine(String.format(Locale.US, "Nectar Tag ID %d", singleDet.id));
                     }
                 }
             }
@@ -204,3 +170,4 @@ public class LimelightAutoIntake extends LinearOpMode {
         }
     }
 }
+
