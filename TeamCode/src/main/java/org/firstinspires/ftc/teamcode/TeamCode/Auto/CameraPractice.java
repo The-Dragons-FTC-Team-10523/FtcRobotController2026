@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.TeamCode.Auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.Cameras;
-import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.Turret;
+//import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.Turret;
 import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
@@ -13,20 +13,18 @@ import java.util.List;
 @Autonomous(name = "CameraPractice")
 public class CameraPractice extends LinearOpMode {
     Cameras cams;
-    Turret turret;
+    //Turret turret;
     List<AprilTagDetection> AprilTagDetections = new ArrayList<>();
 
     @Override
     public void runOpMode() throws InterruptedException {
         cams = new Cameras(hardwareMap);
         //turret = new Turret(hardwareMap);
-
         waitForStart();
-        cams.visionPortal.setProcessorEnabled(cams.cam, true);
         while (opModeIsActive()) {
             AprilTagDetections = cams.getDetections();
+            telemetry.addLine("---Camera---");
             for (AprilTagDetection detection : AprilTagDetections) {
-                telemetry.addLine("---Camera---");
                 if (detection instanceof AprilTagClusterDetection) {
                     AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
                     if (clusterDet.metadata != null) {
@@ -54,6 +52,7 @@ public class CameraPractice extends LinearOpMode {
 
         if (cams != null) {
             cams.stop();
+            telemetry.addLine("stopped");
         }
     }
 }

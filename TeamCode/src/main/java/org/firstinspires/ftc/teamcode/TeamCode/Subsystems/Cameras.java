@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeamCode.Subsystems;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -8,7 +10,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagClusterDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.Turret;
+//import org.firstinspires.ftc.teamcode.TeamCode.Subsystems.Turret;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,37 +21,34 @@ public class Cameras {
     public AprilTagProcessor cam;
     public AprilTagProcessor.Builder camBuilder;
     public VisionPortal visionPortal;
-    Turret turret;
+
+    //Turret turret;
 
 
     public boolean camInitialized;
 
     public Cameras(HardwareMap hardwareMap) {
-        turret = new Turret(hardwareMap);
+        //turret = new Turret(hardwareMap);
 
         // Initialize  Camera
         try {
-            camBuilder = new AprilTagProcessor.Builder();
-            camBuilder.setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary());
-            camBuilder.setDrawTagID(true);
-            camBuilder.setDrawAxes(true);
-            camBuilder.setDrawTagOutline(true);
-            cam = camBuilder.build();
-
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "pollenCam"))
-                    .addProcessor(cam)
-                    .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                    .setAutoStopLiveView(true)
+            cam = new AprilTagProcessor.Builder()
+                    .setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
+                    .setDrawTagID(true)
+                    .setDrawAxes(true)
+                    .setDrawTagOutline(true)
                     .build();
-
-            visionPortal.setProcessorEnabled(cam, true);
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "cam"))
+                    .addProcessor(cam)
+                    .setCameraResolution(new Size(640, 480))
+                    .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                    .enableLiveView(true)
+                    .build();
             camInitialized = true;
         } catch (Exception e) {
             camInitialized = false;
         }
-
-        // Initialize Nectar Camera
 
     }
 
@@ -75,12 +75,12 @@ public class Cameras {
             if (clusterDet.metadata.name.equals(metadata)) {
                 while(!isAimed) {
                     if (clusterDet.ftcPose.x > .5) {
-                        turret.pollenServos.setPower(.5); // moves right
+                        //turret.pollenServos.setPower(.5); // moves right
                     } else if (clusterDet.ftcPose.x < -.5) {
-                        turret.pollenServos.setPower(-.5); // moves left
+                        //turret.pollenServos.setPower(-.5); // moves left
                     } else {
                         isAimed = true;
-                        turret.pollenServos.setPower(0);
+                        //turret.pollenServos.setPower(0);
                     }
                 }
             }
