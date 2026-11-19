@@ -19,7 +19,6 @@ import java.util.List;
 public class Cameras {
 
     public AprilTagProcessor cam;
-    public AprilTagProcessor.Builder camBuilder;
     public VisionPortal visionPortal;
 
     //Turret turret;
@@ -68,19 +67,19 @@ public class Cameras {
         }
     }
     public void aimTurret(String metadata){
-        boolean isAimed = false;
-        List<AprilTagDetection> detections = cam.getDetections();
+        List<AprilTagDetection> detections = getDetections();
         for (AprilTagDetection detection : detections) {
-            AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
-            if (clusterDet.metadata.name.equals(metadata)) {
-                while(!isAimed) {
-                    if (clusterDet.ftcPose.x > .5) {
-                        //turret.pollenServos.setPower(.5); // moves right
-                    } else if (clusterDet.ftcPose.x < -.5) {
-                        //turret.pollenServos.setPower(-.5); // moves left
-                    } else {
-                        isAimed = true;
-                        //turret.pollenServos.setPower(0);
+            if (detection instanceof AprilTagClusterDetection) {
+                AprilTagClusterDetection clusterDet = (AprilTagClusterDetection) detection;
+                if (clusterDet.metadata != null && metadata.equals(clusterDet.metadata.name)) {
+                    if (clusterDet.ftcPose != null) {
+                        if (clusterDet.ftcPose.x > .5) {
+                            //turret.pollenServos.setPower(.5); // moves right
+                        } else if (clusterDet.ftcPose.x < -.5) {
+                            //turret.pollenServos.setPower(-.5); // moves left
+                        } else {
+                            //turret.pollenServos.setPower(0);
+                        }
                     }
                 }
             }
